@@ -393,3 +393,90 @@ systemctl enable httpd
 echo "<h1>Hello From shared_web! This is $(hostname -f)</h1>" > /var/www/html/index.html
 EOF
 }
+
+# Security Group for Production VPC
+resource "aws_security_group" "prod_web" {
+  vpc_id = aws_vpc.production.id
+  tags = {
+    Name = "ProdWebSG"
+  }
+
+  ingress {
+    from_port   = 22          # Allow SSH
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust as necessary)
+  }
+
+  ingress {
+    from_port   = 443         # Allow HTTPS
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTPS from anywhere (adjust as necessary)
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"        # Allow all outbound traffic
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Security Group for Non-Production VPC
+resource "aws_security_group" "non_prod_web" {
+  vpc_id = aws_vpc.non_production.id
+  tags = {
+    Name = "NonProdWebSG"
+  }
+
+  ingress {
+    from_port   = 22          # Allow SSH
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust as necessary)
+  }
+
+  ingress {
+    from_port   = 443         # Allow HTTPS
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTPS from anywhere (adjust as necessary)
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"        # Allow all outbound traffic
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Security Group for Shared Services VPC
+resource "aws_security_group" "shared_web" {
+  vpc_id = aws_vpc.shared_service.id
+  tags = {
+    Name = "SharedWebSG"
+  }
+
+  ingress {
+    from_port   = 22          # Allow SSH
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust as necessary)
+  }
+
+  ingress {
+    from_port   = 443         # Allow HTTPS
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTPS from anywhere (adjust as necessary)
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"        # Allow all outbound traffic
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}

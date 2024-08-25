@@ -417,8 +417,8 @@ resource "aws_security_group" "prod_web" {
   }
 
   ingress {
-    from_port   = 22          # Allow SSH
-    to_port     = 22
+    from_port   = 80          # Allow SSH
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust as necessary)
   }
@@ -446,8 +446,8 @@ resource "aws_security_group" "non_prod_web" {
   }
 
   ingress {
-    from_port   = 22          # Allow SSH
-    to_port     = 22
+    from_port   = 80          # Allow SSH
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust as necessary)
   }
@@ -475,8 +475,8 @@ resource "aws_security_group" "shared_web" {
   }
 
   ingress {
-    from_port   = 22          # Allow SSH
-    to_port     = 22
+    from_port   = 80          # Allow SSH
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust as necessary)
   }

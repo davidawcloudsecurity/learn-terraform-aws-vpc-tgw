@@ -72,7 +72,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "shared_attachment" {
 resource "aws_subnet" "prod_subnet_a" {
   vpc_id     = aws_vpc.production.id
   cidr_block = "10.0.1.0/24"
-  availability_zone = "us-west-2a"
+  availability_zone = "${var.region}a"
   tags = {
     Name = "ProdSubnetA"
   }
@@ -81,7 +81,7 @@ resource "aws_subnet" "prod_subnet_a" {
 resource "aws_subnet" "prod_subnet_b" {
   vpc_id     = aws_vpc.production.id
   cidr_block = "10.0.2.0/24"
-  availability_zone = "us-west-2b"
+  availability_zone = "${var.region}b"
   tags = {
     Name = "ProdSubnetB"
   }
@@ -90,7 +90,7 @@ resource "aws_subnet" "prod_subnet_b" {
 resource "aws_subnet" "non_prod_subnet_a" {
   vpc_id     = aws_vpc.non_production.id
   cidr_block = "10.1.1.0/24"
-  availability_zone = "us-west-2a"
+  availability_zone = "${var.region}a"
   tags = {
     Name = "NonProdSubnetA"
   }
@@ -99,7 +99,7 @@ resource "aws_subnet" "non_prod_subnet_a" {
 resource "aws_subnet" "non_prod_subnet_b" {
   vpc_id     = aws_vpc.non_production.id
   cidr_block = "10.1.2.0/24"
-  availability_zone = "us-west-2b"
+  availability_zone = "${var.region}b"
   tags = {
     Name = "NonProdSubnetB"
   }
@@ -108,7 +108,7 @@ resource "aws_subnet" "non_prod_subnet_b" {
 resource "aws_subnet" "shared_subnet_a" {
   vpc_id     = aws_vpc.shared_service.id
   cidr_block = "10.2.1.0/24"
-  availability_zone = "us-west-2a"
+  availability_zone = "${var.region}a"
   tags = {
     Name = "SharedSubnetA"
   }
@@ -117,7 +117,7 @@ resource "aws_subnet" "shared_subnet_a" {
 resource "aws_subnet" "shared_subnet_b" {
   vpc_id     = aws_vpc.shared_service.id
   cidr_block = "10.2.2.0/24"
-  availability_zone = "us-west-2b"
+  availability_zone = "${var.region}b"
   tags = {
     Name = "SharedSubnetB"
   }

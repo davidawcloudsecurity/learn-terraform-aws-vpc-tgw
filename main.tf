@@ -225,25 +225,32 @@ resource "aws_route_table_association" "shared_public_b" {
   route_table_id = aws_route_table.shared_public.id
 }
 
-# Create IAM Role for SSM
-resource "aws_iam_role" "ssm_role" {
-  name               = "ssm-role"
-  assume_role_policy = data.aws_iam_policy_document.ssm_role_trust_policy.json
+# IAM Role for EC2 Instances
+resource "aws_iam_role" "ec2_ssm_role" {
+  name = "ec2_ssm_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
 }
 
-data "aws_iam_policy_document" "ssm_role_trust_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
+resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  role       = aws_iam_role.ssm_role.name
+  role       = aws_iam_role.ec2_ssm_role.name
+}
+
+resource "aws_iam_instance_profile" "ec2_ssm_profile" {
+  name = "ec2_ssm_profile"
+  role = aws_iam_role.ec2_ssm_role.name
 }
 
 # EC2 Instance for Production VPC
@@ -251,7 +258,7 @@ resource "aws_instance" "prod_web" {
   ami                    = var.ami_id_vm_linux
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.prod_subnet_a.id  # Using the first subnet from Production VPC
-  iam_instance_profile    = aws_iam_role.ssm_role.name
+  iam_instance_profile    = aws_iam_instance_profile.ec2_ssm_profile.name
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
@@ -303,7 +310,7 @@ resource "aws_instance" "non_prod_web" {
   ami                    = var.ami_id_vm_linux
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.non_prod_subnet_a.id  # Using the first subnet from Non-Production VPC
-  iam_instance_profile    = aws_iam_role.ssm_role.name
+  iam_instance_profile    = aws_iam_instance_profile.ec2_ssm_profile.name
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
@@ -355,7 +362,7 @@ resource "aws_instance" "shared_web" {
   ami                    = var.ami_id_vm_linux
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.shared_subnet_a.id  # Using the first subnet from Shared Services VPC
-  iam_instance_profile    = aws_iam_role.ssm_role.name
+  iam_instance_profile    = aws_iam_instance_profile.ec2_ssm_profile.name
   associate_public_ip_address = true
 
   vpc_security_group_ids = [

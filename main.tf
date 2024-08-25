@@ -7,6 +7,14 @@ variable region {
   default = "us-east-1"
 }
 
+variable ami_id_vm_linux {
+  default = "ami-02c21308fed24a8ab"
+}
+
+variable instance_type {
+  default = "t2.micro"
+}
+
 # Create Production VPC
 resource "aws_vpc" "production" {
   cidr_block = "10.0.0.0/16"
